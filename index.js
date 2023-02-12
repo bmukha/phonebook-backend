@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 
+app.use(express.json());
+
 let persons = [
   {
     id: 1,
@@ -26,6 +28,26 @@ let persons = [
 
 app.get('/api/persons', (request, response) => {
   response.json(persons);
+});
+
+app.post('/api/persons', (request, response) => {
+  const { name, number } = request.body;
+
+  if (!name || !number) {
+    return response.status(400).json({
+      error: 'content missing',
+    });
+  }
+
+  const person = {
+    name,
+    number,
+    id: Math.trunc(Math.random() * 100000000000),
+  };
+
+  persons = [...persons, person];
+
+  response.json(person);
 });
 
 app.get('/api/persons/:id', (request, response) => {
