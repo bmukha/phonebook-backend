@@ -2,8 +2,27 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 
-app.use(morgan('tiny'));
 app.use(express.json());
+
+morgan.token('body', (req, res) => {
+  const body = JSON.stringify(req.body);
+  return body === '{}' ? '' : body;
+});
+
+app.use(
+  morgan((tokens, req, res) =>
+    [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, 'content-length'),
+      '-',
+      tokens['response-time'](req, res),
+      'ms',
+      tokens.body(req, res),
+    ].join(' ')
+  )
+);
 
 let persons = [
   {
