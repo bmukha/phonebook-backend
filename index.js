@@ -39,6 +39,14 @@ app.post('/api/persons', (request, response) => {
     });
   }
 
+  const isPersonInPhonebook = persons.some((person) => person.name === name);
+
+  if (isPersonInPhonebook) {
+    return response.status(400).json({
+      error: 'name must be unique',
+    });
+  }
+
   const person = {
     name,
     number,
