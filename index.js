@@ -38,28 +38,17 @@ app.post('/api/persons', (request, response) => {
   const { name, number } = request.body;
 
   if (!name || !number) {
-    return response.status(400).json({
-      error: 'content missing',
-    });
+    return response.status(400).json({ error: 'content missing' });
   }
 
-  const isPersonInPhonebook = persons.some((person) => person.name === name);
-
-  if (isPersonInPhonebook) {
-    return response.status(400).json({
-      error: 'name must be unique',
-    });
-  }
-
-  const person = {
+  const person = new Person({
     name,
     number,
-    id: Math.trunc(Math.random() * 100000000000),
-  };
+  });
 
-  persons = [...persons, person];
-
-  response.json(person);
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 });
 
 app.get('/api/persons/:id', (request, response) => {
