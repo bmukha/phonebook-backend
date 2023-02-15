@@ -70,6 +70,17 @@ app.get('/info', (request, response) => {
   <p>${new Date()}</p>`);
 });
 
+app.put('/api/persons/:id', (request, response, next) => {
+  const { name, number } = request.body;
+  const { id } = request.params;
+
+  Person.findByIdAndUpdate(id, { name, number }, { new: true })
+    .then((updatedPerson) => {
+      response.json(updatedPerson);
+    })
+    .catch((error) => next(error));
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
